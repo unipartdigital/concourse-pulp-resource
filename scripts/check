@@ -20,4 +20,4 @@ fi
 export VERSIONS_HREF
 
 ### Get versions
-http GET ${VERSIONS_HREF}?ordering=number | jq -r ".results | map(select(.number >= ${REPO_VERSION})) | map({number})" >&3
+http GET ${ENDPOINT}${VERSIONS_HREF}?ordering=number | jq -r ".results | map(select(.number >= ${REPO_VERSION})) | map({number})" >&3
