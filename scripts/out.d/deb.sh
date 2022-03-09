@@ -17,7 +17,7 @@ for deb in $deb_files; do
   if [[ $file_count -eq "0" ]]; then
     echo "Uploading $deb"
     export TASK_URL=$(http --form POST ${BASE_ADDR}/pulp/api/v3/content/deb/packages/ file@"$deb" Authorization:"$BASIC_AUTH" | jq -r '.task')
-    sleep 5
+    sleep 2
     export CONTENT_HREF=$(http GET ${BASE_ADDR}${TASK_URL} Authorization:"$BASIC_AUTH" | jq -r '.created_resources | first')
   else
     CONTENT_HREF=$(http GET ${BASE_ADDR}/pulp/api/v3/content/deb/packages/?relative_path=${relative_path} Authorization:"$BASIC_AUTH" | jq -r '.results[0].pulp_href')
