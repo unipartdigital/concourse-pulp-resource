@@ -7,10 +7,14 @@ pre_flight() {
 
   version="$(jq -r '.version.number // ""' < $1)"
 
-  if [[ "${package_type}" != "deb" ]]; then
-    echo "type must be one of: deb"
-    exit 1
-  fi
+  case ${package_type} in
+    deb)
+      export REPO_TYPE=deb/apt
+      ;;
+    *)
+      echo "Unsupported package type ${package_type}"
+      exit 1
+      ;;
 
   if [[ -z "${username}" ]]; then
     echo "username must be supplied for auth"
@@ -36,7 +40,6 @@ pre_flight() {
   export BASIC_AUTH="Basic `echo -n ${username}:${password} | base64`"
   export ENDPOINT=${endpoint}
   export REPO_NAME=${repository}
-  export REPO_TYPE=deb/apt
 
   if [[ -n "${version}" ]]; then
     export REPO_VERSION=${version}

@@ -25,9 +25,7 @@ if [[ $REPO_HREF == "null" ]]; then
 fi
 export REPO_HREF
 
-if [[ "${PACKAGE_TYPE}" == "deb" ]]; then
-  source out.d/deb.sh "$@"
-fi
+source out.d/${PACKAGE_TYPE}.sh "$@"
 
 TASK_URL=$(http POST ${BASE_ADDR}/pulp/api/v3/publications/${REPO_TYPE}/ repository="${REPO_HREF}" simple=true Authorization:"${BASIC_AUTH}" | jq -r '.task')
 sleep 2
