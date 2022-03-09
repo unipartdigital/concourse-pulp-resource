@@ -26,5 +26,5 @@ fi
 export REPO_HREF
 
 if [[ "${PACKAGE_TYPE}" == "deb" ]]; then
-  source out/deb.sh "$@"
+  source out.d/deb.sh "$@"
 fi
