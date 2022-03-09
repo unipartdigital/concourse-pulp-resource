@@ -15,6 +15,7 @@ pre_flight() {
       echo "Unsupported package type ${package_type}"
       exit 1
       ;;
+  esac
 
   if [[ -z "${username}" ]]; then
     echo "username must be supplied for auth"
