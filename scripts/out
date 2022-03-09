@@ -24,23 +24,23 @@ export REPO_HREF
 
 source "$(dirname "$0")/out.d/${PACKAGE_TYPE}.sh" "$@"
 
-TASK_URL=$(http POST ${BASE_ADDR}/pulp/api/v3/publications/${REPO_TYPE}/ repository="${REPO_HREF}" simple=true Authorization:"${BASIC_AUTH}" | jq -r '.task')
+TASK_URL=$(http POST ${ENDPOINT}/pulp/api/v3/publications/${REPO_TYPE}/ repository="${REPO_HREF}" simple=true Authorization:"${BASIC_AUTH}" | jq -r '.task')
 sleep 2
-PUBLICATION_HREF=$(http GET ${BASE_ADDR}${TASK_URL} Authorization:"${BASIC_AUTH}" | jq -r '.created_resources | first')
+PUBLICATION_HREF=$(http GET ${ENDPOINT}${TASK_URL} Authorization:"${BASIC_AUTH}" | jq -r '.created_resources | first')
 
-OLD_DIST_HREF=$(http GET ${BASE_ADDR}/pulp/api/v3/distributions/${REPO_TYPE}/?base_path=${REPO_NAME} Authorization:"${BASIC_AUTH}" | jq -r '.results[0].pulp_href')
+OLD_DIST_HREF=$(http GET ${ENDPOINT}/pulp/api/v3/distributions/${REPO_TYPE}/?base_path=${REPO_NAME} Authorization:"${BASIC_AUTH}" | jq -r '.results[0].pulp_href')
 if [[ $OLD_DIST_HREF != "null" ]]; then
-  http DELETE ${BASE_ADDR}${OLD_DIST_HREF} Authorization:"${BASIC_AUTH}" | jq -r '.task'
+  http DELETE ${ENDPOINT}${OLD_DIST_HREF} Authorization:"${BASIC_AUTH}" | jq -r '.task'
   sleep 2
 fi
 
-TASK_URL=$(http POST ${BASE_ADDR}/pulp/api/v3/distributions/${REPO_TYPE}/ publication="$PUBLICATION_HREF" name="${REPO_NAME}" base_path="${REPO_NAME}" Authorization:"${BASIC_AUTH}" | jq -r '.task')
+TASK_URL=$(http POST ${ENDPOINT}/pulp/api/v3/distributions/${REPO_TYPE}/ publication="$PUBLICATION_HREF" name="${REPO_NAME}" base_path="${REPO_NAME}" Authorization:"${BASIC_AUTH}" | jq -r '.task')
 sleep 2
 
-DISTRIBUTION_HREF=$(http ${BASE_ADDR}${TASK_URL} Authorization:"${BASIC_AUTH}" | jq -r '.created_resources | first')
-export METADATA=$(http ${BASE_ADDR}${DISTRIBUTION_HREF} Authorization:"${BASIC_AUTH}" | jq -cr 'to_entries | map({name: .key, value})')
+DISTRIBUTION_HREF=$(http ${ENDPOINT}${TASK_URL} Authorization:"${BASIC_AUTH}" | jq -r '.created_resources | first')
+export METADATA=$(http ${ENDPOINT}${DISTRIBUTION_HREF} Authorization:"${BASIC_AUTH}" | jq -cr 'to_entries | map({name: .key, value})')
 
-VERSION_HREF=$(http GET ${BASE_ADDR}${PUBLICATION_HREF} Authorization:"${BASIC_AUTH}" | jq -r '.repository_version')
-export VERSION=$(http GET ${BASE_ADDR}${VERSION_HREF} Authorization:"${BASIC_AUTH}" | jq -cr '{number: .number | tostring}')
+VERSION_HREF=$(http GET ${ENDPOINT}${PUBLICATION_HREF} Authorization:"${BASIC_AUTH}" | jq -r '.repository_version')
+export VERSION=$(http GET ${ENDPOINT}${VERSION_HREF} Authorization:"${BASIC_AUTH}" | jq -cr '{number: .number | tostring}')
 
 jq -n "{version: $VERSION, metadata: $METADATA}" >&3
