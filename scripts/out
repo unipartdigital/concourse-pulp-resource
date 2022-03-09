@@ -45,3 +45,5 @@ export METADATA=$(http ${BASE_ADDR}${DISTRIBUTION_HREF} Authorization:"${BASIC_A
 
 VERSION_HREF=$(http GET ${BASE_ADDR}${PUBLICATION_HREF} Authorization:"${BASIC_AUTH}" | jq -r '.repository_version')
 export VERSION=$(http GET ${BASE_ADDR}${VERSION_HREF} Authorization:"${BASIC_AUTH}" | jq -r '{number}')
+
+jq -n "{version: $VERSION, metadata: $METADATA}" >&3
