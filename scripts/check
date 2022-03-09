@@ -17,9 +17,9 @@ fi
 pre_flight "${payload}"
 
 ### Check repo exists and get repo href
-VERSIONS_HREF=$(http GET ${ENDPOINT}/pulp/api/v3/repositories/deb/apt/?name=$REPO_NAME Authorization:"$BASIC_AUTH" | jq -r '.results[0].versions_href')
+VERSIONS_HREF=$(http GET ${ENDPOINT}/pulp/api/v3/repositories/${REPO_TYPE}/?name=${REPO_NAME} Authorization:"$BASIC_AUTH" | jq -r '.results[0].versions_href')
 if [ $VERSIONS_HREF = "null" ]; then
-  VERSIONS_HREF=$(http POST ${ENDPOINT}/pulp/api/v3/repositories/deb/apt/ name="$REPO_NAME" Authorization:"$BASIC_AUTH" | jq -r '.versions_href')
+  VERSIONS_HREF=$(http POST ${ENDPOINT}/pulp/api/v3/repositories/${REPO_TYPE}/ name="${REPO_NAME}" Authorization:"$BASIC_AUTH" | jq -r '.versions_href')
 fi
 export VERSIONS_HREF
 

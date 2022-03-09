@@ -36,6 +36,7 @@ pre_flight() {
   export BASIC_AUTH="Basic `echo -n ${username}:${password} | base64`"
   export ENDPOINT=${endpoint}
   export REPO_NAME=${repository}
+  export REPO_TYPE=deb/apt
 
   if [[ -n "${version}" ]]; then
     export REPO_VERSION=${version}
