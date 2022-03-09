@@ -44,6 +44,6 @@ DISTRIBUTION_HREF=$(http ${BASE_ADDR}${TASK_URL} Authorization:"${BASIC_AUTH}" |
 export METADATA=$(http ${BASE_ADDR}${DISTRIBUTION_HREF} Authorization:"${BASIC_AUTH}" | jq -cr 'to_entries | map({name: .key, value})')
 
 VERSION_HREF=$(http GET ${BASE_ADDR}${PUBLICATION_HREF} Authorization:"${BASIC_AUTH}" | jq -r '.repository_version')
-export VERSION=$(http GET ${BASE_ADDR}${VERSION_HREF} Authorization:"${BASIC_AUTH}" | jq -cr '{number}')
+export VERSION=$(http GET ${BASE_ADDR}${VERSION_HREF} Authorization:"${BASIC_AUTH}" | jq -cr '{number: tostring(.number)}')
 
 jq -n "{version: $VERSION, metadata: $METADATA}" >&3
