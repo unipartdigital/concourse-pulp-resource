@@ -2,7 +2,7 @@ deb_files=`find $1 -name '*.deb'`
 for deb in $deb_files; do
   if [[ `dpkg-deb -I $deb | grep 'Auto-Built-Package: debug-symbols'` ]]; then
     if [[ $UPLOAD_DEBUGS != "true" ]]; then
-      echo "Not uploading debug symbols; set `debug: true` to upload"
+      echo "Not uploading debug symbols; set 'debug: true' to upload"
       continue
     fi
     package_name=$(dpkg-deb -I $deb | grep "^ Description: " | sed -e's/^ Description: debug symbols for //')
