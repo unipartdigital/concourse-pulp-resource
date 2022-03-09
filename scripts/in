@@ -9,11 +9,8 @@ exec 1>&2 # redirect all output to stderr for logging
 TMPDIR=${TMPDIR:-/tmp}
 source "$(dirname "$0")/common.sh"
 payload="$(mktemp "${TMPDIR}/pulp-resource.XXXXXX")"
-if [[ -n "$PULP_TESTING" ]] && [[ ${PULP_TESTING} == "true" ]]; then
-  cat > "${payload}" <./payload
-else
-  cat > "${payload}" <&0
-fi
+# cat > "${payload}" <./payload
+cat > "${payload}" <&0
 pre_flight "${payload}"
 
 echo "Input not supported, implicit get does nothing"
