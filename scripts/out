@@ -30,14 +30,16 @@ if [[ "${PACKAGE_TYPE}" == "deb" ]]; then
 fi
 
 TASK_URL=$(http POST ${BASE_ADDR}/pulp/api/v3/publications/${REPO_TYPE}/ repository="${REPO_HREF}" simple=true Authorization:"${BASIC_AUTH}" | jq -r '.task')
-sleep 5
+sleep 2
 PUBLICATION_HREF=$(http GET ${BASE_ADDR}${TASK_URL} Authorization:"${BASIC_AUTH}" | jq -r '.created_resources | first')
 
 OLD_DIST_HREF=$(http GET ${BASE_ADDR}/pulp/api/v3/distributions/${REPO_TYPE}/?base_path=${REPO_NAME} Authorization:"${BASIC_AUTH}" | jq -r '.results[0].pulp_href')
-http DELETE ${BASE_ADDR}${OLD_DIST_HREF} Authorization:"${BASIC_AUTH}" | jq -r '.task'
-sleep 5
+if [[ $OLD_DIST_HREF != "null" ]]; then
+  http DELETE ${BASE_ADDR}${OLD_DIST_HREF} Authorization:"${BASIC_AUTH}" | jq -r '.task'
+  sleep 2
+fi
 
 TASK_URL=$(http POST ${BASE_ADDR}/pulp/api/v3/distributions/${REPO_TYPE}/ publication="$PUBLICATION_HREF" name="${REPO_NAME}" base_path="${REPO_NAME}" Authorization:"${BASIC_AUTH}" | jq -r '.task')
-sleep 5
+sleep 2
 
 DISTRIBUTION_HREF=$(http ${BASE_ADDR}${TASK_URL} Authorization:"${BASIC_AUTH}" | jq -r '.created_resources | first')
