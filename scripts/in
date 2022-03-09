@@ -6,5 +6,16 @@ set -e -u
 exec 3>&1 # make stdout available as fd 3 for the result
 exec 1>&2 # redirect all output to stderr for logging
 
-echo "Input not supported, implicit get does nothing" >&3
-exit 0
+TMPDIR=${TMPDIR:-/tmp}
+source "$(dirname "$0")/common.sh"
+payload="$(mktemp "${TMPDIR}/pulp-resource.XXXXXX")"
+if [[ ${PULP_TESTING} == "true" ]]; then
+  cat > "${payload}" <./payload
+else
+  cat > "${payload}" <&0
+fi
+pre_flight "${payload}"
+
+echo "Input not supported, implicit get does nothing"
+
+echo $INPUT_VERSION >&3

@@ -44,7 +44,9 @@ pre_flight() {
 
   if [[ -n "${version}" ]]; then
     export REPO_VERSION=${version}
+    export INPUT_VERSION="$(jq -r '{version}' < $1)"
   else
     export REPO_VERSION=-1
+    export REPO_VERSION='{"version":{"number":"-1"}}'
   fi
 }
