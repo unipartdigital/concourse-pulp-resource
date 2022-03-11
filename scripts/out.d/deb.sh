@@ -23,4 +23,10 @@ for deb in $deb_files; do
     CONTENT_HREF=$(http GET ${ENDPOINT}/pulp/api/v3/content/deb/packages/?relative_path=${relative_path} Authorization:"$BASIC_AUTH" | jq -r '.results[0].pulp_href')
   fi
   http POST ${ENDPOINT}${REPO_HREF}modify/ add_content_units:="[\"${CONTENT_HREF}\"]" Authorization:"$BASIC_AUTH"
+  uploaded=1
 done
+
+if [[ -z "$uploaded" ]]; then
+  echo "No files changed"
+  exit 1
+fi
