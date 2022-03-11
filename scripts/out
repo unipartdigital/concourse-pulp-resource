@@ -17,13 +17,13 @@ UPLOAD_DEBUGS="$(jq -r '.params.debug // ""' < ${payload})"
 # ### Check repo exists and get repo href
 REPO_HREF=$(http GET ${ENDPOINT}/pulp/api/v3/repositories/${REPO_TYPE}/?name=${REPO_NAME} Authorization:"${BASIC_AUTH}" | jq -r '.results[0].pulp_href')
 if [[ $REPO_HREF == "null" ]]; then
-  REPO_HREF=$(http POST ${ENDPOINT}/pulp/api/v3/repositories/${REPO_TYPE}/ name="${REPO_NAME}" Authorization:"${BASIC_AUTH}" | jq -r '.pulp_href')
+  REPO_HREF=$(http POST --ignore-stdin ${ENDPOINT}/pulp/api/v3/repositories/${REPO_TYPE}/ name="${REPO_NAME}" Authorization:"${BASIC_AUTH}" | jq -r '.pulp_href')
 fi
 export REPO_HREF
 
 source "$(dirname "$0")/out.d/${PACKAGE_TYPE}.sh" "$@"
 
-TASK_URL=$(http POST ${ENDPOINT}/pulp/api/v3/publications/${REPO_TYPE}/ repository="${REPO_HREF}" simple=true Authorization:"${BASIC_AUTH}" | jq -r '.task')
+TASK_URL=$(http POST --ignore-stdin ${ENDPOINT}/pulp/api/v3/publications/${REPO_TYPE}/ repository="${REPO_HREF}" simple=true Authorization:"${BASIC_AUTH}" | jq -r '.task')
 sleep 2
 PUBLICATION_HREF=$(http GET ${ENDPOINT}${TASK_URL} Authorization:"${BASIC_AUTH}" | jq -r '.created_resources | first')
 
@@ -33,7 +33,7 @@ if [[ $OLD_DIST_HREF != "null" ]]; then
   sleep 2
 fi
 
-TASK_URL=$(http POST ${ENDPOINT}/pulp/api/v3/distributions/${REPO_TYPE}/ publication="$PUBLICATION_HREF" name="${REPO_NAME}" base_path="${REPO_NAME}" Authorization:"${BASIC_AUTH}" | jq -r '.task')
+TASK_URL=$(http POST --ignore-stdin ${ENDPOINT}/pulp/api/v3/distributions/${REPO_TYPE}/ publication="$PUBLICATION_HREF" name="${REPO_NAME}" base_path="${REPO_NAME}" Authorization:"${BASIC_AUTH}" | jq -r '.task')
 sleep 2
 
 DISTRIBUTION_HREF=$(http ${ENDPOINT}${TASK_URL} Authorization:"${BASIC_AUTH}" | jq -r '.created_resources | first')
