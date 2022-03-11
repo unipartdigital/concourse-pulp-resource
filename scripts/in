@@ -9,7 +9,6 @@ exec 1>&2 # redirect all output to stderr for logging
 TMPDIR=${TMPDIR:-/tmp}
 source "$(dirname "$0")/common.sh"
 payload="$(mktemp "${TMPDIR}/pulp-resource.XXXXXX")"
-# cat > "${payload}" <./payload
 cat > "${payload}" <&0
 pre_flight "${payload}"
 
