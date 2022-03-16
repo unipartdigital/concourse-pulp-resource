@@ -24,17 +24,17 @@ export REPO_HREF
 source "$(dirname "$0")/out.d/${PACKAGE_TYPE}.sh" "$@"
 
 TASK_URL=$(http POST ${ENDPOINT}/pulp/api/v3/publications/${REPO_TYPE}/ repository="${REPO_HREF}" simple=true Authorization:"${BASIC_AUTH}" --ignore-stdin | jq -r '.task')
-sleep 2
+sleep 3
 PUBLICATION_HREF=$(http GET ${ENDPOINT}${TASK_URL} Authorization:"${BASIC_AUTH}" | jq -r '.created_resources | first')
 
 OLD_DIST_HREF=$(http GET ${ENDPOINT}/pulp/api/v3/distributions/${REPO_TYPE}/?base_path=${REPO_NAME} Authorization:"${BASIC_AUTH}" | jq -r '.results[0].pulp_href')
 if [[ $OLD_DIST_HREF != "null" ]]; then
   http DELETE ${ENDPOINT}${OLD_DIST_HREF} Authorization:"${BASIC_AUTH}" | jq -r '.task'
-  sleep 2
+  sleep 3
 fi
 
 TASK_URL=$(http POST ${ENDPOINT}/pulp/api/v3/distributions/${REPO_TYPE}/ publication="$PUBLICATION_HREF" name="${REPO_NAME}" base_path="${REPO_NAME}" Authorization:"${BASIC_AUTH}" --ignore-stdin | jq -r '.task')
-sleep 2
+sleep 3
 
 DISTRIBUTION_HREF=$(http GET ${ENDPOINT}${TASK_URL} Authorization:"${BASIC_AUTH}" | jq -r '.created_resources | first')
 export METADATA=$(http GET ${ENDPOINT}${DISTRIBUTION_HREF} Authorization:"${BASIC_AUTH}" | jq -cr 'to_entries | map({name: .key, value})')
