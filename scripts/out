@@ -37,7 +37,7 @@ TASK_URL=$(http POST ${ENDPOINT}/pulp/api/v3/distributions/${REPO_TYPE}/ publica
 sleep 3
 
 DISTRIBUTION_HREF=$(http GET ${ENDPOINT}${TASK_URL} Authorization:"${BASIC_AUTH}" | jq -r '.created_resources | first')
-export METADATA=$(http GET ${ENDPOINT}${DISTRIBUTION_HREF} Authorization:"${BASIC_AUTH}" | jq -cr 'to_entries | map({name: .key, value})')
+export METADATA=$(http GET ${ENDPOINT}${DISTRIBUTION_HREF} Authorization:"${BASIC_AUTH}" | jq -cr 'to_entries | map({name: .key, value: .value | tostring})')
 
 VERSION_HREF=$(http GET ${ENDPOINT}${PUBLICATION_HREF} Authorization:"${BASIC_AUTH}" | jq -r '.repository_version')
 export VERSION=$(http GET ${ENDPOINT}${VERSION_HREF} Authorization:"${BASIC_AUTH}" | jq -cr '{number: .number | tostring}')
